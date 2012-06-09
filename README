@@ -1,3 +1,21 @@
+综述：
+本工程用于获取www.cppblog.com的相关博客信息，由于cppblog似乎基于Metablog架构的，并且提供
+了相应的服务接口用于第三方程序的接入，因此可使用对应的API来完成撰写，删除，抓取博客的功能，
+具体的功能见： http://www.cppblog.com/YourUserName/services/metaweblog.aspx
+
+目前，本工程已完成抓取功能的所有子模块，包括：
+1. 根据一篇文章的博客ID，抓取对应的内容，标题和发布时间等信息（其余信息可自行添加，采用类似
+的办法，因本人只对这写信息感兴趣）
+2. 获取所有的分类信息和Rss订阅信息
+3. 获取博客信息
+4. 获取指定数量的近期发布文章
+4. 保存为HTML页面
+
+基于上述功能，可以完成博客迁移和备份工作，只需要循环利用抓取文章相关的函数即可，后期可能会
+更新并提供完整功能，目前只完成这些子模块。
+
+================================== Basic introduction ==================================
+
 This blog is used to move my cppblog articles to local files(HTML).
 
 Apache XML-RPC + Java
