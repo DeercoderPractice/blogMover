@@ -2,6 +2,7 @@ package com.deercoder.cppblog.transfer;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.io.*;
 
@@ -52,54 +53,83 @@ public class Transfer {
 	private static final String KEY_DATE = "dateCreated";
 	
 	// 提供服务的地址
-	private static String URL = "http://www.cppblog.com/deercoder/services/metaweblog.aspx";
-	private static String POST_ID = "174774"; // 文章id
 	private static String USER_NAME = "xxx"; // 用户名
 	private static String USER_PASSWORD = "xxx"; // 用户密码
 
-	public static void main(String[] args) throws Exception {
-		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-		config.setServerURL(new URL(URL));
-		XmlRpcClient client = new XmlRpcClient();
-		client.setConfig(config); 
+	// XML-RPC client config setting for all usage
+	XmlRpcClientConfigImpl config;
+	XmlRpcClient client;
+
+	/** 
+	* @param url 服务提供商的MetaBlog的地址
+	*/ 
+	public Transfer(String url){
+		try {
+			config =  new XmlRpcClientConfigImpl();
+			client = new XmlRpcClient();
+			config.setServerURL(new URL(url));
+			client.setConfig(config); 
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/** 
+	* 获取Post的所需内容（标题，时间和内容），并以String返回HTML形式
+	* @param postId 发布博客文章的id
+	*/ 
+	public String getOnePost(String postId) throws Exception {
 		// 这个是方法需要的参数，参数必须按照方法要求的顺序添加，详细的可以在服务提供页查看
+		String saveString = "";
 		List params = new ArrayList();
-		params.add(POST_ID);
+		params.add(postId);
 		params.add(USER_NAME);
 		params.add(USER_PASSWORD);
 				
 		Map<String, Object> result = (Map<String, Object>) client.execute(
 				GET_POST, params);
-		PrintWriter out = new PrintWriter("/media/Code/a.html");
-		
+
 		String title = getPostTitle(result);
 		if (title != null){
 			System.out.println(title);
-			out.println(title + "<br/>"); // 文章标题，并以HTML形式存放
+			saveString += title + "<br/>"; // 文章标题，并以HTML形式存放
 		}
 		
-		
-		Date date = getPostDate(result);	
+
+		Date date = getPostDate(result);
 		if (date != null) {
 			String dateString = getPostTime(date);
 			System.out.println(dateString);
-			out.println(dateString + "<br/>");
+			saveString += dateString + "<br/>";
 		}
-		
+
 		String article = getPostArticle(result);
 		if (article != null) {
 			System.out.println(article);
-			out.println(article + "<br/>");
-		}
-		
-		out.close();
+			saveString += article + "<br/>";
+		}	
+		return saveString;
 	}
-	
+
 	/** 
 	* 获取Post的标题（即每一篇博客的标题）
 	* @param result 发送一次getPost请求后接收的结果
 	*/ 
-	public static String getPostTitle(Map<String, Object> result){
+	public void saveToHTML(String savePath, String content){
+		try {
+			PrintWriter out = new PrintWriter(savePath);
+			out.println(content);
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/** 
+	* 获取Post的标题（即每一篇博客的标题）
+	* @param result 发送一次getPost请求后接收的结果
+	*/ 
+	public String getPostTitle(Map<String, Object> result){
 		if (result == null){
 			return null;
 		}else{
@@ -111,12 +141,12 @@ public class Transfer {
 			}	
 		}
 	}
-	
+
 	/** 
 	* 获取Post的内容（即每一篇博客的内容）
 	* @param result 发送一次getPost请求后接收的结果
 	*/ 
-	public static String getPostArticle(Map<String, Object> result){
+	public String getPostArticle(Map<String, Object> result){
 		if (result == null){
 			return null;
 		}else{
@@ -128,12 +158,12 @@ public class Transfer {
 			}	
 		}
 	}
-	
+
 	/** 
 	* 获取Post的时间（即每一篇博客发布的时间）
 	* @param result 发送一次getPost请求后接收的结果
 	*/ 
-	public static Date getPostDate(Map<String, Object> result){
+	public Date getPostDate(Map<String, Object> result){
 		if (result == null) {
 			return null;
 		} else {
@@ -145,12 +175,12 @@ public class Transfer {
 			}
 		}
 	}
-	
+
 	/** 
 	* 转换成所需要的时间格式
 	* @param date 获取的文章发布时间
 	*/ 
-	public static String getPostTime(Date date) {
+	public String getPostTime(Date date) {
 		if (date == null) {
 			return null;
 		}
