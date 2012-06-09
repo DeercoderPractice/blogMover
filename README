@@ -1,0 +1,23 @@
+This blog is used to move my cppblog articles to local files(HTML).
+
+Apache XML-RPC + Java
+
+This project is based on www.cppblog.com, which provide the MetaWeblog API interface,
+According to the url:
+    http://www.cppblog.com/deercoder/services/metaweblog.aspx
+
+we could get some useful information about Post(which is a class defines the aritcle 
+title , time and content, other information is optional, like categories, link, 
+enclosement, we currently don't deal with it)
+
+==========================================================================================
+此工程用于将我的cppblog中的博文转移到本地，保存为HTML格式，用于后续的博客迁移工作.
+
+API接口地址：
+http://www.cppblog.com/deercoder/services/metaweblog.aspx
+
+技术：
+Apache + Java
+采用Apache的XMLRPC库，根据cppblog.com提供的MetaWeblog Api接口，设置相关参数，发送请求
+消息，根据获得的消息，利用API定义的接口，进行解析，获取其中的时间，标题，内容等有用
+信息。
